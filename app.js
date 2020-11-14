@@ -13,7 +13,7 @@ app.use(cors());
 // app.use(express.static("/files"));
 // app.use(express.static(path.join(__dirname, "client/build")));
 app.use("/public", express.static("public"));
-app.use(express.static(path.join(__dirname, "view/build")));
+app.use(express.static(path.join(__dirname, "client/build")));
 
 // Set storage
 let storage = multer.diskStorage({
@@ -81,7 +81,7 @@ app.use((err, req, res, next) => {
 });
 
 app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname + "/view/build/index.html"));
+	res.sendFile(path.join(__dirname + "/client/build/index.html"));
 });
 
 // PORT

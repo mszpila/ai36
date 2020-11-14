@@ -48,7 +48,7 @@ function UploadPage() {
 		formData.append("file", files[0]);
 		axios
 
-			.post("http://localhost:5000/api/upload", formData, config)
+			.post("/api/upload", formData, config)
 			.then((response) => {
 				// setActiveStep((prevActiveStep) => prevActiveStep + 1);
 				console.log(response.data);

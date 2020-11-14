@@ -43,36 +43,36 @@ let storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// const s3 = new AWS.S3({
-// 	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-// 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-// });
+const s3 = new AWS.S3({
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
 
 app.post("/api/upload", upload.single("file"), async (req, res) => {
-	// const fileUpload = () => {
-	// 	const paramsFile = {
-	// 		Bucket: `${process.env.S3_BUCKET_NAME}/public/uploads/ai`,
-	// 		Key: `${req.file.filename}`, // File name you want to save as in S3
-	// 		// Body: `public/uploads/videos/${customFilename}.gif`,
-	// 		Body: fs.readFileSync(
-	// 			path.join(__dirname, `files`, `${req.file.filename}`)
-	// 		),
-	// 	};
-	// 	return new Promise((resolve) => {
-	// 		s3.upload(paramsFile, function (err, data) {
-	// 			if (err) {
-	// 				throw err;
-	// 			}
-	// 			// console.log(`File uploaded successfully. ${data.Location}`);
-	// 			resolve(data.Location);
-	// 		});
-	// 	});
-	// };
-	// const link = await fileUpload();
+	const fileUpload = () => {
+		const paramsFile = {
+			Bucket: `${process.env.S3_BUCKET_NAME}/public/uploads/ai`,
+			Key: `${req.file.filename}`, // File name you want to save as in S3
+			// Body: `public/uploads/videos/${customFilename}.gif`,
+			Body: fs.readFileSync(
+				path.join(__dirname, `public`, `${req.file.filename}`)
+			),
+		};
+		return new Promise((resolve) => {
+			s3.upload(paramsFile, function (err, data) {
+				if (err) {
+					throw err;
+				}
+				// console.log(`File uploaded successfully. ${data.Location}`);
+				resolve(data.Location);
+			});
+		});
+	};
+	const link = await fileUpload();
 
-	const link = req.file.path.replace(/\\/g, "/");
+	// const link = req.file.path.replace(/\\/g, "/");
 	const type = req.file.mimetype;
-	res.json({ success: true, type, link });
+	res.status(200).json({ success: true, type, link });
 });
 
 app.use((err, req, res, next) => {

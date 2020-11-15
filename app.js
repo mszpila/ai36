@@ -48,6 +48,34 @@ const s3 = new AWS.S3({
 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
+AWS.config.region = "eu-central-1";
+
+app.get("/api/sign", (req, res) => {
+	const s3 = new AWS.S3();
+	const fileName = req.query["filename"];
+	const fileType = req.query["type"];
+	const s3Params = {
+		Bucket: process.env.S3_BUCKET_NAME,
+		Key: "ai_36/" + fileName,
+		Expires: 60,
+		ContentType: fileType,
+		ACL: "public-read",
+	};
+
+	s3.getSignedUrl("putObject", s3Params, (err, data) => {
+		if (err) {
+			console.log(err);
+			return res.end();
+		}
+		const returnData = {
+			signedRequest: data,
+			url: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`,
+		};
+		res.write(JSON.stringify(returnData));
+		res.end();
+	});
+});
+
 app.post("/api/upload", upload.single("file"), async (req, res) => {
 	const fileUpload = () => {
 		const paramsFile = {

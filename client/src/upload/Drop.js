@@ -23,11 +23,9 @@ function UploadVideo({ handleDrop }) {
 				</div>
 				<div className="uploadVideo__info">
 					<div className="uploadVideo__infoMain">
-						Drag and drop the video files you want to upload
+						Drag and drop the files you want to analyze
 					</div>
-					<div className="uploadVideo__infoExtra">
-						Your videos will be private until you publish them.
-					</div>
+					<div className="uploadVideo__infoExtra">AI_36</div>
 				</div>
 				<Dropzone onDrop={(files) => handleDrop(files)}>
 					{({ getRootProps, getInputProps }) => (

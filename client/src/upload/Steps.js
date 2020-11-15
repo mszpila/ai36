@@ -33,9 +33,19 @@ function UploadPage() {
 		}
 	};
 
-	const handleDrop = (files) => {
-		setActiveStep((prevActiveStep) => prevActiveStep + 1);
-		let formData = new FormData();
+	const getSignedRequest = async (file) => {
+		const { name, type } = file;
+		if (type !== "video" || type !== "image") {
+			return false;
+		}
+		const response = await axios.get("/api/sign", {
+			params: { filename: name, type },
+		});
+		uploadFile(file, response.data.signedRequest, response.data.url, type);
+		return true;
+	};
+
+	const uploadFile = async (file, signedRequest, url, type) => {
 		const config = {
 			header: { "content-type": "multipart/form-data" },
 			onUploadProgress: function (progressEvent) {
@@ -45,19 +55,16 @@ function UploadPage() {
 				setProgress(percentCompleted);
 			},
 		};
-		formData.append("file", files[0]);
-		axios
+		await axios.put(signedRequest, file, config);
+		setType(type);
+		setLink(url);
+	};
 
-			.post("/api/upload", formData, config)
-			.then((response) => {
-				// setActiveStep((prevActiveStep) => prevActiveStep + 1);
-				console.log(response.data);
-				setFile(response.data.success);
-				setType(response.data.type);
-				setResult(response.data.success);
-				setLink(response.data.link);
-			})
-			.catch((err) => alert(err.data));
+	const handleDrop = async (files) => {
+		const sign = await getSignedRequest(files[0]);
+		if (sign) {
+			setActiveStep((prevActiveStep) => prevActiveStep + 1);
+		}
 	};
 
 	return <div className="upload">{getStepContent(activeStep)}</div>;

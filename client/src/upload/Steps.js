@@ -35,14 +35,14 @@ function UploadPage() {
 
 	const getSignedRequest = async (file) => {
 		const { name, type } = file;
-		if (type !== "video" || type !== "image") {
-			return false;
-		}
+		// if (type !== "video" || type !== "image") {
+		// 	return false;
+		// }
 		const response = await axios.get("/api/sign", {
 			params: { filename: name, type },
 		});
 		uploadFile(file, response.data.signedRequest, response.data.url, type);
-		return true;
+		// return true;
 	};
 
 	const uploadFile = async (file, signedRequest, url, type) => {
@@ -61,10 +61,8 @@ function UploadPage() {
 	};
 
 	const handleDrop = async (files) => {
-		const sign = await getSignedRequest(files[0]);
-		if (sign) {
-			setActiveStep((prevActiveStep) => prevActiveStep + 1);
-		}
+		await getSignedRequest(files[0]);
+		setActiveStep((prevActiveStep) => prevActiveStep + 1);
 	};
 
 	return <div className="upload">{getStepContent(activeStep)}</div>;
